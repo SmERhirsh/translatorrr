@@ -1,0 +1,2 @@
+[null,{"id":1,"name":"Inn Greeting","trigger":0,"switchId":1,"list":[{"code":101,"indent":0,"parameters":["Actor1",0,0,2,"Innkeeper"]},{"code":401,"indent":0,"parameters":["Welcome, \\N[1]!"]},{"code":102,"indent":0,"parameters":[["Rest","Leave"],1,0,2,0]},{"code":402,"indent":0,"parameters":[0,"Rest"]},{"code":401,"indent":1,"parameters":["Sleep well."]},{"code":402,"indent":0,"parameters":[1,"Leave"]},{"code":105,"indent":0,"parameters":[2,false]},{"code":405,"indent":0,"parameters":["Ancient words glow."]},{"code":0,"indent":0,"parameters":[]}]}]
+

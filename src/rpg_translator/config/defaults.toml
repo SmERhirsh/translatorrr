@@ -1,0 +1,83 @@
+[app]
+name = "RPG Maker Translator"
+source_language = "en"
+target_language = "ru"
+
+[provider]
+active_profile = "lm_studio"
+
+[provider.profiles.lm_studio]
+kind = "lm_studio"
+base_url = "http://localhost:1234/v1"
+model = "local-model"
+api_key = ""
+api_key_env = ""
+timeout_seconds = 120
+max_retries = 2
+temperature = 0.2
+top_p = 0.9
+max_tokens = 4096
+
+[provider.profiles.ollama]
+kind = "ollama"
+base_url = "http://localhost:11434"
+model = "llama3.1"
+api_key = ""
+api_key_env = ""
+timeout_seconds = 120
+max_retries = 2
+temperature = 0.2
+top_p = 0.9
+max_tokens = 4096
+
+[provider.profiles.openai]
+kind = "openai"
+base_url = "https://api.openai.com/v1"
+model = "gpt-4.1-mini"
+api_key = ""
+api_key_env = "OPENAI_API_KEY"
+timeout_seconds = 120
+max_retries = 3
+temperature = 0.2
+top_p = 0.9
+max_tokens = 4096
+
+[translation]
+batch_max_segments = 16
+batch_max_chars = 6000
+request_timeout_seconds = 120
+retry_failed_batches = true
+max_batch_retries = 2
+
+[extraction]
+translate_database_names = true
+translate_database_descriptions = true
+translate_dialogue = true
+translate_choices = true
+translate_scroll_text = true
+translate_map_names = false
+translate_notes = false
+translate_comments = false
+translate_plugin_parameters = false
+
+[output]
+mode = "translated_copy"
+directory_suffix = "_ru"
+make_backups = true
+write_manifest = true
+preserve_json_indentation = true
+
+[logging]
+level = "INFO"
+console_enabled = true
+file_enabled = true
+json_file = true
+max_bytes = 5242880
+backup_count = 5
+log_dir = ""
+
+[storage]
+database_path = ""
+cache_enabled = true
+translation_memory_enabled = true
+

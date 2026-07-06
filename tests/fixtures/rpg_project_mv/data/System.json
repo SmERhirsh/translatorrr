@@ -1,0 +1,2 @@
+{"gameTitle":"Fixture Quest","currencyUnit":"Gold","elements":["","Physical","Fire"],"skillTypes":["","Magic"],"weaponTypes":["","Sword"],"armorTypes":["","Light Armor"],"equipTypes":["","Weapon","Shield"],"switches":["","Door Open"],"variables":["","Hero Name"],"terms":{"basic":["Level","Lv","HP","MP"],"params":["Max HP","Max MP","Attack"],"commands":["Fight","Escape","Attack","Guard","Item","Skill"],"messages":{"actionFailure":"There was no effect on %1!","actorDamage":"%1 took %2 damage!","actorRecovery":"%1 recovered %2 %3!"}}}
+
