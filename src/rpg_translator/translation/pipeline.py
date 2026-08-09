@@ -68,6 +68,7 @@ class CheckpointState:
     status: str
     created_at: str
     updated_at: str
+    schema_version: str = "1.0"
 
     @classmethod
     def from_job(cls, job: TranslationJob, translated: dict[str, str], completed_ids: set[str]) -> "CheckpointState":
@@ -87,6 +88,7 @@ class CheckpointState:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "schema_version": self.schema_version,
             "job_id": self.job_id,
             "project_root": self.project_root,
             "source_language": self.source_language,
@@ -102,7 +104,22 @@ class CheckpointState:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "CheckpointState":
+        # schema_version is required - missing means incompatible checkpoint
+        if "schema_version" not in data:
+            raise ValueError(
+                "Checkpoint file missing required 'schema_version' field. "
+                "The checkpoint may be corrupted or from an incompatible version."
+            )
+        
+        schema_version = data["schema_version"]
+        if schema_version != "1.0":
+            raise ValueError(
+                f"Unsupported checkpoint schema version: {schema_version!r}. "
+                f"Expected '1.0'. The checkpoint file may be from an incompatible version."
+            )
+        
         return cls(
+            schema_version=schema_version,
             job_id=data["job_id"],
             project_root=data["project_root"],
             source_language=data["source_language"],
@@ -379,7 +396,7 @@ class TranslationPipeline:
         temp_path.replace(checkpoint_path)
 
     def _load_checkpoint(self, path: Path) -> CheckpointState:
-        """Load checkpoint from file."""
+        """Load checkpoint from file with schema version validation."""
         content = path.read_text(encoding="utf-8")
         data = json.loads(content)
         return CheckpointState.from_dict(data)
