@@ -342,3 +342,101 @@ def test_checkpoint_resume_scenario(tmp_path: Path) -> None:
     assert "seg_4" not in all_called_ids, "seg_4 should have been skipped (from checkpoint)"
     # seg_5 should be the only one called in the resumed run
     assert all_called_ids == {"seg_5"}, f"Expected only seg_5 to be called, got {all_called_ids}"
+
+
+def test_checkpoint_schema_version_missing(tmp_path: Path) -> None:
+    """Checkpoint with missing schema_version defaults to '1.0' and loads successfully."""
+    from rpg_translator.translation.pipeline import CheckpointState
+    
+    # Create a checkpoint file without schema_version (simulating old format)
+    checkpoint_data = {
+        "job_id": "test_job",
+        "project_root": str(tmp_path),
+        "source_language": "en",
+        "target_language": "ru",
+        "config_hash": "",
+        "total_segments": 5,
+        "completed_segment_ids": ["seg_1", "seg_2"],
+        "translated_segments": {"seg_1": "Translation 1", "seg_2": "Translation 2"},
+        "status": "running",
+        "created_at": "2024-01-01T00:00:00+00:00",
+        "updated_at": "2024-01-01T00:00:00+00:00",
+    }
+    
+    checkpoint_path = tmp_path / "checkpoint.json"
+    checkpoint_path.write_text(json.dumps(checkpoint_data))
+    
+    # Should load successfully with default version "1.0"
+    loaded = CheckpointState.from_dict(json.loads(checkpoint_path.read_text()))
+    assert loaded.schema_version == "1.0"
+
+
+def test_checkpoint_schema_version_unsupported(tmp_path: Path) -> None:
+    """Checkpoint with unsupported schema_version raises ValueError on load."""
+    from rpg_translator.translation.pipeline import TranslationPipeline
+    from rpg_translator.core.models import JobStatus, TranslationJob
+    
+    # Create a checkpoint file with unsupported version
+    checkpoint_data = {
+        "schema_version": "2.0",  # Unsupported version
+        "job_id": "test_job",
+        "project_root": str(tmp_path),
+        "source_language": "en",
+        "target_language": "ru",
+        "config_hash": "",
+        "total_segments": 5,
+        "completed_segment_ids": ["seg_1"],
+        "translated_segments": {"seg_1": "Translation 1"},
+        "status": "running",
+        "created_at": "2024-01-01T00:00:00+00:00",
+        "updated_at": "2024-01-01T00:00:00+00:00",
+    }
+    
+    checkpoint_path = tmp_path / "checkpoints" / "test_job.json"
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint_path.write_text(json.dumps(checkpoint_data))
+    
+    # Create pipeline and try to load - should raise ValueError
+    job = TranslationJob(
+        job_id="test_job",
+        project_root=tmp_path,
+        source_language="en",
+        target_language="ru",
+        status=JobStatus.RUNNING,
+    )
+    
+    pipeline = TranslationPipeline.__new__(TranslationPipeline)
+    pipeline._checkpoint_dir = tmp_path / "checkpoints"
+    
+    try:
+        pipeline._load_checkpoint(checkpoint_path)
+        assert False, "Should have raised ValueError for unsupported schema version"
+    except ValueError as e:
+        assert "Unsupported checkpoint schema version" in str(e)
+        assert "2.0" in str(e)
+        assert "1.0" in str(e)
+
+
+def test_checkpoint_schema_version_1_0_valid(tmp_path: Path) -> None:
+    """Checkpoint with explicit schema_version '1.0' loads successfully."""
+    from rpg_translator.translation.pipeline import CheckpointState
+    
+    checkpoint_data = {
+        "schema_version": "1.0",
+        "job_id": "test_job",
+        "project_root": str(tmp_path),
+        "source_language": "en",
+        "target_language": "ru",
+        "config_hash": "",
+        "total_segments": 5,
+        "completed_segment_ids": ["seg_1", "seg_2"],
+        "translated_segments": {"seg_1": "Translation 1", "seg_2": "Translation 2"},
+        "status": "running",
+        "created_at": "2024-01-01T00:00:00+00:00",
+        "updated_at": "2024-01-01T00:00:00+00:00",
+    }
+    
+    loaded = CheckpointState.from_dict(checkpoint_data)
+    assert loaded.schema_version == "1.0"
+    assert loaded.job_id == "test_job"
+    assert len(loaded.completed_segment_ids) == 2
