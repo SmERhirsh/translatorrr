@@ -345,10 +345,10 @@ def test_checkpoint_resume_scenario(tmp_path: Path) -> None:
 
 
 def test_checkpoint_schema_version_missing(tmp_path: Path) -> None:
-    """Checkpoint with missing schema_version defaults to '1.0' and loads successfully."""
+    """Checkpoint with missing schema_version raises ValueError (incompatible)."""
     from rpg_translator.translation.pipeline import CheckpointState
     
-    # Create a checkpoint file without schema_version (simulating old format)
+    # Create a checkpoint file without schema_version (simulating corrupted/old format)
     checkpoint_data = {
         "job_id": "test_job",
         "project_root": str(tmp_path),
@@ -366,9 +366,12 @@ def test_checkpoint_schema_version_missing(tmp_path: Path) -> None:
     checkpoint_path = tmp_path / "checkpoint.json"
     checkpoint_path.write_text(json.dumps(checkpoint_data))
     
-    # Should load successfully with default version "1.0"
-    loaded = CheckpointState.from_dict(json.loads(checkpoint_path.read_text()))
-    assert loaded.schema_version == "1.0"
+    # Should raise ValueError - missing schema_version means incompatible checkpoint
+    try:
+        CheckpointState.from_dict(json.loads(checkpoint_path.read_text()))
+        assert False, "Should have raised ValueError for missing schema_version"
+    except ValueError as e:
+        assert "missing required 'schema_version' field" in str(e)
 
 
 def test_checkpoint_schema_version_unsupported(tmp_path: Path) -> None:
