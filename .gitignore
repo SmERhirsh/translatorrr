@@ -1,1 +1,20 @@
-Nothing needs to be added to the .gitignore file based on the provided changes. The added file 'tests/integration/test_full_e2e.py' is a source code file that should not be ignored.
+```
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Test and coverage
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
+
+# Virtual environments
+venv/
+.venv/
+.env
+.env.local
+*.env.*
+```
