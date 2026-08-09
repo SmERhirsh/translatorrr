@@ -39,7 +39,7 @@ class ExtractionTests(unittest.TestCase):
         segments = result.segments
         counts = Counter(segment.context.file_kind for segment in segments)
 
-        self.assertEqual(len(segments), 67)
+        self.assertEqual(len(segments), 66)  # Updated after removing currencyUnit from System.json extraction
         self.assertEqual(counts[RPGMakerFileKind.ACTORS], 3)
         self.assertEqual(counts[RPGMakerFileKind.CLASSES], 1)
         self.assertEqual(counts[RPGMakerFileKind.ITEMS], 2)
@@ -48,7 +48,7 @@ class ExtractionTests(unittest.TestCase):
         self.assertEqual(counts[RPGMakerFileKind.ARMORS], 2)
         self.assertEqual(counts[RPGMakerFileKind.STATES], 5)
         self.assertEqual(counts[RPGMakerFileKind.ENEMIES], 1)
-        self.assertEqual(counts[RPGMakerFileKind.SYSTEM], 27)
+        self.assertEqual(counts[RPGMakerFileKind.SYSTEM], 26)  # Updated after removing currencyUnit
         self.assertEqual(counts[RPGMakerFileKind.MAP_INFOS], 1)
         self.assertEqual(counts[RPGMakerFileKind.COMMON_EVENTS], 8)
         self.assertEqual(counts[RPGMakerFileKind.TROOPS], 2)
