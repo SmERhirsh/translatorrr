@@ -11,7 +11,7 @@ from rpg_translator.rpgmaker.extractors.base import SegmentBuilder
 class SystemExtractor:
     """Extract player-facing text from RPG Maker System.json."""
 
-    _top_level_fields = ("gameTitle", "currencyUnit")
+    _top_level_fields = ("gameTitle",)  # currencyUnit is not translated
     _array_fields = (
         "elements",
         "skillTypes",
