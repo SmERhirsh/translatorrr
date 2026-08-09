@@ -279,6 +279,7 @@ def test_checkpoint_resume_scenario(tmp_path: Path) -> None:
     )
     
     # Create 5 segments (will be 3 batches with batch_size=2)
+    # Use range(1, 6) to create seg_1 through seg_5 as expected by the test assertions
     segments = tuple(
         TextSegment(
             segment_id=f"seg_{i}",
@@ -286,7 +287,7 @@ def test_checkpoint_resume_scenario(tmp_path: Path) -> None:
             source_file=tmp_path / "test.json",
             context=SegmentContext(file_kind=RPGMakerFileKind.SYSTEM, json_pointer=JsonPointer.root()),
         )
-        for i in range(5)
+        for i in range(1, 6)  # seg_1, seg_2, seg_3, seg_4, seg_5
     )
     
     # Create job
