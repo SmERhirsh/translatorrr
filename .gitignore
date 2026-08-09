@@ -1,2 +1,40 @@
+```
+# Compiled Python files
+*.pyc
 __pycache__/
-*.py[cod]
+
+# Dependencies
+.venv/
+venv/
+node_modules/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Environment files
+.env
+.env.local
+*.env.*
+
+# Coverage reports
+.coverage
+coverage/
+htmlcov/
+
+# IDE files
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+target/
+
+# MyPy cache
+.mypy_cache/
+
+# Pytest cache
+.pytest_cache/
+```
